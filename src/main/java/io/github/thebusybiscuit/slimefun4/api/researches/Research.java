@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import io.github.thebusybiscuit.slimefun4.integrations.VaultIntegration;
+import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -249,7 +251,9 @@ public class Research implements Keyed {
         }
 
         boolean creativeResearch = p.getGameMode() == GameMode.CREATIVE && Slimefun.getRegistry().isFreeCreativeResearchingEnabled();
-        return creativeResearch || p.getLevel() >= cost;
+        Economy econ = VaultIntegration.getEconomy();
+//        return creativeResearch || p.getLevel() >= cost;
+        return creativeResearch || econ.has(p, cost);
     }
 
     /**

@@ -60,6 +60,9 @@ public class IntegrationsManager {
     private boolean isItemsAdderInstalled = false;
     private boolean isOrebfuscatorInstalled = false;
 
+    private boolean isVaultInstalled = false;
+
+
     /**
      * This initializes the {@link IntegrationsManager}
      * 
@@ -129,6 +132,13 @@ public class IntegrationsManager {
 
         // ItemsAdder Integration (custom blocks)
         load("ItemsAdder", integration -> isItemsAdderInstalled = true);
+
+
+        // ClearLag integration (to prevent display items from getting deleted)
+        load("Vault", integration -> {
+            new VaultIntegration(plugin).register();
+            isVaultInstalled = true;
+        });
     }
 
     /**
@@ -308,5 +318,9 @@ public class IntegrationsManager {
 
     public boolean isOrebfuscatorInstalled() {
         return isOrebfuscatorInstalled;
+    }
+
+    public boolean isVaultInstalled() {
+        return isVaultInstalled;
     }
 }

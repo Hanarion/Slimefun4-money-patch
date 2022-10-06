@@ -5,6 +5,9 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import io.github.thebusybiscuit.slimefun4.integrations.VaultIntegration;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -70,10 +73,16 @@ public interface SlimefunGuideImplementation {
         if (p.getGameMode() == GameMode.CREATIVE && Slimefun.getRegistry().isFreeCreativeResearchingEnabled()) {
             research.unlock(p, true, callback);
         } else {
-            p.setLevel(p.getLevel() - research.getCost());
+            //            p.setLevel(p.getLevel() - research.getCost());
+            Economy econ = VaultIntegration.getEconomy();
+            EconomyResponse r = econ.withdrawPlayer(p, research.getCost());
+            if(r.transactionSuccess()) {
+                boolean skipLearningAnimation = Slimefun.getRegistry().isLearningAnimationDisabled() || !SlimefunGuideSettings.hasLearningAnimationEnabled(p);
+                research.unlock(p, skipLearningAnimation, callback);
+            } else {
+                p.sendMessage(String.format("An error occured: %s", r.errorMessage));
+            }
 
-            boolean skipLearningAnimation = Slimefun.getRegistry().isLearningAnimationDisabled() || !SlimefunGuideSettings.hasLearningAnimationEnabled(p);
-            research.unlock(p, skipLearningAnimation, callback);
         }
     }
 
